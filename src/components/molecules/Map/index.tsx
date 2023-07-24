@@ -39,7 +39,7 @@ const Map = ({ children, coordinate }: IMapProps) => {
         provider={PROVIDER_GOOGLE}
         showsUserLocation={true}
         followsUserLocation
-        showsMyLocationButton
+        //showsMyLocationButton
         initialRegion={region}
         region={region}>
         <>{children}</>
