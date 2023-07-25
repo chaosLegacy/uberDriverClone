@@ -9,11 +9,14 @@ import Colors from '~/constants/Colors';
 import BalanceButton from '~/components/molecules/BalanceButton';
 import NewOrderPopup from '~/components/organisms/NewOrderPopup';
 import OrderStatusPopup from '~/components/organisms/OrderStatusPopup';
-import { OrderInput } from '~/types';
+import { CognitoUserExt, OrderInput } from '~/types';
 import MapDirections from '~/components/molecules/MapDirections';
 import MapMarker from '~/components/molecules/MapMarker';
 import MapView, { LatLng, UserLocationChangeEvent } from 'react-native-maps';
 import { height, moveBetweenTwoPoints, width } from '~/utils';
+import { getDriverCarByUserId, updateDriverCar } from '~/services/car';
+import { getAuthenticatedUser } from '~/services/user';
+import { Car } from '~/API';
 
 const HomeTemplate = () => {
   // Mock client directions: origin: L'atelier du 6 Nantes, destination: Centre Commercial Atlantis
@@ -38,6 +41,28 @@ const HomeTemplate = () => {
   const [driverPosition, setDriverPosition] = useState<LatLng>();
   const [destinationPosition, setDestinationPosition] =
     useState<LatLng>(clientPickUp);
+  const [currentUser, setCurrentUser] = useState<CognitoUserExt>();
+  const [driverCar, setDriverCar] = useState<Car>();
+
+  useEffect(() => {
+    const getCurrentUser = async () => {
+      const authenticatedUser = await getAuthenticatedUser();
+      setCurrentUser(authenticatedUser);
+    };
+    // call the function
+    getCurrentUser();
+  }, []);
+
+  useEffect(() => {
+    if (currentUser) {
+      const getDriverCar = async () => {
+        const myCar = await getDriverCarByUserId(currentUser);
+        setDriverCar(myCar);
+      };
+      // call the function
+      getDriverCar();
+    }
+  }, [currentUser]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -111,8 +136,19 @@ const HomeTemplate = () => {
   const onPressBalance = () => {
     console.warn('balance...');
   };
-  const onPressGo = () => {
-    setIsOnline(!isOnline);
+  const onPressGo = async () => {
+    if (driverCar) {
+      const updatedCar = {
+        id: driverCar.id,
+        isAvailable: !isOnline,
+      };
+      await updateDriverCar(updatedCar);
+      setDriverCar({
+        ...driverCar,
+        isAvailable: !isOnline,
+      });
+      setIsOnline(!isOnline);
+    }
   };
   // Bring Driver location one time
   const onDriverLocationChange = (event: UserLocationChangeEvent) => {
