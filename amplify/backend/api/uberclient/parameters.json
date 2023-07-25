@@ -1,0 +1,11 @@
+{
+  "AppSyncApiName": "uberclient",
+  "DynamoDBBillingMode": "PAY_PER_REQUEST",
+  "DynamoDBEnableServerSideEncryption": false,
+  "AuthCognitoUserPoolId": {
+    "Fn::GetAtt": [
+      "authuberclientAuth",
+      "Outputs.UserPoolId"
+    ]
+  }
+}

@@ -28,6 +28,15 @@ import {
 } from '~/utils/permissions';
 import 'react-native-gesture-handler';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { withAuthenticator } from 'aws-amplify-react-native';
+import { Amplify } from 'aws-amplify';
+import awsExports from '~/aws-exports';
+Amplify.configure({
+  ...awsExports,
+  Analytics: {
+    disabled: true,
+  },
+});
 
 function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
@@ -68,4 +77,4 @@ function App(): JSX.Element {
   );
 }
 
-export default App;
+export default withAuthenticator(App);

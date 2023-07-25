@@ -519,6 +519,12 @@ PODS:
     - React-jsi (= 0.72.3)
     - React-logger (= 0.72.3)
     - React-perflogger (= 0.72.3)
+  - RNAWSCognito (6.3.1):
+    - React-Core
+  - RNCAsyncStorage (1.19.1):
+    - React-Core
+  - RNCPicker (2.4.10):
+    - React-Core
   - RNGestureHandler (2.12.0):
     - React-Core
   - RNReanimated (3.3.0):
@@ -626,6 +632,9 @@ DEPENDENCIES:
   - React-runtimescheduler (from `../node_modules/react-native/ReactCommon/react/renderer/runtimescheduler`)
   - React-utils (from `../node_modules/react-native/ReactCommon/react/utils`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
+  - RNAWSCognito (from `../node_modules/amazon-cognito-identity-js`)
+  - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
+  - "RNCPicker (from `../node_modules/@react-native-picker/picker`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
@@ -736,6 +745,12 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/react/utils"
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
+  RNAWSCognito:
+    :path: "../node_modules/amazon-cognito-identity-js"
+  RNCAsyncStorage:
+    :path: "../node_modules/@react-native-async-storage/async-storage"
+  RNCPicker:
+    :path: "../node_modules/@react-native-picker/picker"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
   RNReanimated:
@@ -802,6 +817,9 @@ SPEC CHECKSUMS:
   React-runtimescheduler: 837c1bebd2f84572db17698cd702ceaf585b0d9a
   React-utils: bcb57da67eec2711f8b353f6e3d33bd8e4b2efa3
   ReactCommon: 3ccb8fb14e6b3277e38c73b0ff5e4a1b8db017a9
+  RNAWSCognito: 5687577d12900389a893a9705ce31b6fa71c3805
+  RNCAsyncStorage: f47fe18526970a69c34b548883e1aeceb115e3e1
+  RNCPicker: 0bc2f0a29abcca7b7ed44a2d036aac9ab6d25700
   RNGestureHandler: dec4645026e7401a0899f2846d864403478ff6a5
   RNReanimated: 9f7068e43b9358a46a688d94a5a3adb258139457
   RNVectorIcons: 8b5bb0fa61d54cd2020af4f24a51841ce365c7e9
