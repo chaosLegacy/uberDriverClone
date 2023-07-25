@@ -26,6 +26,8 @@ import {
   requestAndroidLocationPermission,
   requestIosLocation,
 } from '~/utils/permissions';
+import 'react-native-gesture-handler';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
@@ -42,25 +44,27 @@ function App(): JSX.Element {
   }, []);
 
   return (
-    <SafeAreaView style={[GlobalStyles.container, backgroundStyle]}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}
-        contentContainerStyle={GlobalStyles.flexGrow}>
-        <Container>
-          <View
-            style={{
-              backgroundColor: isDarkMode ? Colors.black : Colors.white,
-            }}>
-            <HomeScreen />
-          </View>
-        </Container>
-      </ScrollView>
-    </SafeAreaView>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaView style={[GlobalStyles.container, backgroundStyle]}>
+        <StatusBar
+          barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+          backgroundColor={backgroundStyle.backgroundColor}
+        />
+        <ScrollView
+          contentInsetAdjustmentBehavior="automatic"
+          style={backgroundStyle}
+          contentContainerStyle={GlobalStyles.flexGrow}>
+          <Container>
+            <View
+              style={{
+                backgroundColor: isDarkMode ? Colors.black : Colors.white,
+              }}>
+              <HomeScreen />
+            </View>
+          </Container>
+        </ScrollView>
+      </SafeAreaView>
+    </GestureHandlerRootView>
   );
 }
 

@@ -4,10 +4,12 @@ const Colors = {
   turquoise: '#1faadb',
   lightBlue: '#bed9ff',
   blue: '#2b80ff',
-  gray: '#e7e7e7',
+  gray: '#cac8c8',
   lightGray: '#efefef',
   darkGray: '#312e2e',
   lightGreen: '#42d742',
+  red: '#ce1d1d',
+  lightRed: '#e14444',
 };
 
 export default Colors;

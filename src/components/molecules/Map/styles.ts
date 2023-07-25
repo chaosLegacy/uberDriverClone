@@ -3,7 +3,7 @@ import { StyleSheet, Dimensions } from 'react-native';
 const styles = StyleSheet.create({
   mapContainer: {
     flex: 1,
-    height: Dimensions.get('window').height - 80,
+    height: Dimensions.get('window').height - 88,
   },
   mapView: {
     width: '100%',

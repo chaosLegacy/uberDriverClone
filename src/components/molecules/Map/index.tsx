@@ -1,6 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { forwardRef, useEffect, useState } from 'react';
 
-import MapView, { PROVIDER_GOOGLE, Region } from 'react-native-maps';
+import MapView, {
+  PROVIDER_GOOGLE,
+  Region,
+  UserLocationChangeEvent,
+} from 'react-native-maps';
 
 import styles from './styles';
 import { View } from 'react-native';
@@ -8,10 +12,18 @@ import Geolocation from '@react-native-community/geolocation';
 
 type IMapProps = {
   coordinate?: Region;
+  showsMyLocationButton?: boolean;
+  onLocationChange?: (event: UserLocationChangeEvent) => void;
   children?: React.ReactNode;
 };
 
-const Map = ({ children, coordinate }: IMapProps) => {
+const Map = forwardRef<MapView, IMapProps>((props, ref) => {
+  const {
+    coordinate,
+    showsMyLocationButton = false,
+    onLocationChange,
+    children,
+  } = props;
   const [region, setRegion] = useState({
     latitude: 0.0,
     longitude: 0.0,
@@ -35,17 +47,19 @@ const Map = ({ children, coordinate }: IMapProps) => {
   return (
     <View style={styles.mapContainer}>
       <MapView
+        ref={ref}
         style={styles.mapView}
         provider={PROVIDER_GOOGLE}
         showsUserLocation={true}
         followsUserLocation
-        //showsMyLocationButton
+        showsMyLocationButton={showsMyLocationButton}
+        onUserLocationChange={onLocationChange}
         initialRegion={region}
         region={region}>
         <>{children}</>
       </MapView>
     </View>
   );
-};
+});
 
 export default Map;
