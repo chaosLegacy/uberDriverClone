@@ -7,6 +7,9 @@ type User @model
 {
   id: ID!
   username: String!
+  name: String
+  rating: Float
+  avatar: String
   email: String!
   orders: [Order] @hasMany(indexName: "byUser", fields: ["id"])
   car: Car @hasOne(fields: ["id"])
@@ -31,15 +34,10 @@ type Order @model @auth(rules: [{ allow: private }]) {
   carId: ID @index(name: "byCar", sortKeyFields: ["createdAt"])
   car: Car @belongsTo(fields: ["carId"])
   type: String!
-  status: String
+  status: String!
   originLat: Float!
   originLong: Float!
   destLat: Float!
   destLong: Float!
-  distance: Float
-  duration: Float
-  accept: Boolean
-  pickedUp: Boolean
-  reached: Boolean
   createdAt: AWSDateTime!
 }

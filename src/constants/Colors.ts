@@ -9,6 +9,7 @@ const Colors = {
   darkGray: '#312e2e',
   lightGreen: '#42d742',
   red: '#ce1d1d',
+  hotPink: '#ff69b4',
   lightRed: '#e14444',
 };
 

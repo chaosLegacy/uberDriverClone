@@ -9,19 +9,20 @@ const styles = StyleSheet.create({
     height: '100%',
     padding: 20,
     justifyContent: 'space-between',
-    backgroundColor: '#00000055',
+    backgroundColor: '#00000075',
   },
   declineButton: {
     backgroundColor: Colors.black,
-    padding: 15,
+    padding: 12.2,
     borderRadius: 50,
     width: 100,
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   declineText: {
     color: Colors.gray,
-    fontWeight: '600',
+    fontWeight: '700',
   },
   popupContainer: {
     backgroundColor: Colors.black,

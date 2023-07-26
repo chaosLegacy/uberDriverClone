@@ -1,4 +1,5 @@
 import { CognitoUser } from '@aws-amplify/auth';
+import { LatLng } from 'react-native-maps';
 
 type CarType = 'UberX' | 'UberXL' | 'Comfort';
 
@@ -10,32 +11,12 @@ type Car = {
   longitude: number;
   heading: number;
 };
-//TODO temp type to remove when implementing AWS amplify to get from API
-type UserInput = {
-  id?: string | null;
-  name: string;
-  username: string;
-  email: string;
-  rating: string;
-};
-export type OrderInput = {
-  id?: string | null;
-  userId: string;
-  carId?: string | null;
-  type: string;
-  originLat: number;
-  originLong: number;
-  destLat: number;
-  destLong: number;
-  user: UserInput;
-  createdAt?: string | null;
-  distance?: number;
-  duration?: number;
-  pickedUp?: boolean;
-  reached?: boolean;
-  accept?: boolean;
-};
 
+type MapDirectionProps = {
+  coordinates?: LatLng[];
+  distance: number;
+  duration: number;
+};
 type UserAttributes = {
   sub: string;
   email: string;
@@ -55,4 +36,4 @@ interface CognitoUserExt extends CognitoUser {
   attributes: UserAttributes;
 }
 
-export type { CarType, Car, CognitoUserExt };
+export type { CarType, Car, CognitoUserExt, MapDirectionProps };

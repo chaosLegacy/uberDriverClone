@@ -10,6 +10,9 @@ export const createUser = /* GraphQL */ `
     createUser(input: $input, condition: $condition) {
       id
       username
+      name
+      rating
+      avatar
       email
       orders {
         nextToken
@@ -41,6 +44,9 @@ export const updateUser = /* GraphQL */ `
     updateUser(input: $input, condition: $condition) {
       id
       username
+      name
+      rating
+      avatar
       email
       orders {
         nextToken
@@ -72,6 +78,9 @@ export const deleteUser = /* GraphQL */ `
     deleteUser(input: $input, condition: $condition) {
       id
       username
+      name
+      rating
+      avatar
       email
       orders {
         nextToken
@@ -115,6 +124,9 @@ export const createCar = /* GraphQL */ `
       user {
         id
         username
+        name
+        rating
+        avatar
         email
         createdAt
         updatedAt
@@ -146,6 +158,9 @@ export const updateCar = /* GraphQL */ `
       user {
         id
         username
+        name
+        rating
+        avatar
         email
         createdAt
         updatedAt
@@ -177,6 +192,9 @@ export const deleteCar = /* GraphQL */ `
       user {
         id
         username
+        name
+        rating
+        avatar
         email
         createdAt
         updatedAt
@@ -199,6 +217,9 @@ export const createOrder = /* GraphQL */ `
       user {
         id
         username
+        name
+        rating
+        avatar
         email
         createdAt
         updatedAt
@@ -223,11 +244,6 @@ export const createOrder = /* GraphQL */ `
       originLong
       destLat
       destLong
-      distance
-      duration
-      accept
-      pickedUp
-      reached
       createdAt
       updatedAt
       __typename
@@ -245,6 +261,9 @@ export const updateOrder = /* GraphQL */ `
       user {
         id
         username
+        name
+        rating
+        avatar
         email
         createdAt
         updatedAt
@@ -269,11 +288,6 @@ export const updateOrder = /* GraphQL */ `
       originLong
       destLat
       destLong
-      distance
-      duration
-      accept
-      pickedUp
-      reached
       createdAt
       updatedAt
       __typename
@@ -291,6 +305,9 @@ export const deleteOrder = /* GraphQL */ `
       user {
         id
         username
+        name
+        rating
+        avatar
         email
         createdAt
         updatedAt
@@ -315,11 +332,6 @@ export const deleteOrder = /* GraphQL */ `
       originLong
       destLat
       destLong
-      distance
-      duration
-      accept
-      pickedUp
-      reached
       createdAt
       updatedAt
       __typename

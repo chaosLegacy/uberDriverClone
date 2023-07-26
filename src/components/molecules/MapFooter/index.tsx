@@ -4,39 +4,48 @@ import Container from '~/components/atoms/Container';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Colors from '~/constants/Colors';
 import styles from './styles';
-import { OrderInput } from '~/types';
+import { Order } from '~/API';
+import { MapDirectionProps } from '~/types';
+import { ORDER_STATUS } from '~/constants';
 
 type MapFooterProps = {
-  newOrder?: OrderInput;
+  newOrder?: Order;
+  orderStatus: ORDER_STATUS;
+  direction?: MapDirectionProps;
   onlineStatus: boolean;
 };
-const MapFooter = ({ newOrder, onlineStatus }: MapFooterProps) => {
-  const orderTemplate = (order: OrderInput, isDroppingOff?: boolean) => {
+const MapFooter = ({
+  newOrder,
+  orderStatus,
+  onlineStatus,
+  direction,
+}: MapFooterProps) => {
+  const orderTemplate = (order: Order) => {
+    const isDroppingOff =
+      orderStatus === ORDER_STATUS['PICKED-UP'] ||
+      orderStatus === ORDER_STATUS['DROP-OFF'];
     return (
       <View style={styles.orderContainer}>
         <View style={styles.row}>
           <Text style={styles.time}>
-            {order.duration ? order.duration.toFixed(1) : '?'} min
+            {direction ? direction.duration.toFixed(1) : '?'} min
           </Text>
           <Image
             source={require('assets/images/default.jpeg')}
             style={styles.userPicture}
           />
           <Text style={styles.distance}>
-            {order.distance ? order.distance.toFixed(1) : '?'} km
+            {direction ? direction.distance.toFixed(1) : '?'} km
           </Text>
         </View>
         <Text style={styles.userName}>{`${
           isDroppingOff ? 'Dropping off' : 'Picking up'
-        } ${order.user.name}`}</Text>
+        } ${order.user?.name}`}</Text>
       </View>
     );
   };
   const renderStatusMessage = () => {
     if (newOrder) {
-      if (newOrder.pickedUp) {
-        return orderTemplate(newOrder, true);
-      }
       return orderTemplate(newOrder);
     }
     return (

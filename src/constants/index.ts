@@ -1,0 +1,14 @@
+const DISTANCE_THRESHOLD = 0.2;
+enum UBER_TYPES {
+  'UberX',
+  'UberXL',
+  'Comfort',
+}
+enum ORDER_STATUS {
+  'NEW',
+  'CONFIRMED',
+  'PICKED-UP',
+  'DROP-OFF',
+  'COMPLETED',
+}
+export { DISTANCE_THRESHOLD, UBER_TYPES, ORDER_STATUS };

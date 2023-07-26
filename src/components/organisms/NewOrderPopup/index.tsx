@@ -4,17 +4,20 @@ import styles from './styles';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Colors from '~/constants/Colors';
 import SlideButton from 'rn-slide-button';
-import { OrderInput } from '~/types';
+import { Order } from '~/API';
+import { MapDirectionProps } from '~/types';
 
 type NewOrderPopupProps = {
-  newOrder: OrderInput;
+  newOrder: Order;
+  direction?: MapDirectionProps;
   closePopup?: boolean;
   onDecline: () => void;
-  onAccept: (newOrder: OrderInput) => void;
+  onAccept: (newOrder: Order) => void;
 };
 
 const NewOrderPopup = ({
   newOrder,
+  direction,
   closePopup = false,
   onDecline,
   onAccept,
@@ -31,28 +34,40 @@ const NewOrderPopup = ({
       <View style={styles.popupContainer}>
         <View style={styles.row}>
           <Text style={styles.uberType}>{newOrder.type}</Text>
-          <Image
-            source={require('assets/images/default.jpeg')}
-            style={styles.userPicture}
-          />
-          <Text style={styles.stars}>
-            <AntDesign name="star" size={18} color={Colors.gray} />{' '}
-            {newOrder.user.rating}
-          </Text>
+          {newOrder.user && (
+            <>
+              {newOrder.user.avatar ? (
+                <Image
+                  source={{ uri: newOrder.user.avatar }}
+                  style={styles.userPicture}
+                />
+              ) : (
+                <Image
+                  source={require('assets/images/default.jpeg')}
+                  style={styles.userPicture}
+                />
+              )}
+
+              <Text style={styles.stars}>
+                <AntDesign name="star" size={18} color={Colors.gray} />{' '}
+                {newOrder.user.rating}
+              </Text>
+            </>
+          )}
         </View>
         <View style={styles.detailContainer}>
           <Text style={styles.time}>
-            {newOrder.duration ? newOrder.duration.toFixed(1) : '?'} min
+            {direction ? direction.duration.toFixed(1) : '?'} min
           </Text>
           <Text style={styles.distance}>
-            {newOrder.distance ? newOrder.distance.toFixed(1) : '?'} km
+            {direction ? direction.distance.toFixed(1) : '?'} km
           </Text>
         </View>
         <View style={styles.detailContainer}>
           <SlideButton
             title="Slide To Accept"
             height={50}
-            borderRadius={27}
+            borderRadius={10}
             icon={
               <AntDesign name="doubleright" size={18} color={Colors.blue} />
             }

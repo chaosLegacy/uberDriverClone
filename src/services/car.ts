@@ -5,8 +5,8 @@ import { Car, CreateCarInput, UpdateCarInput } from '~/API';
 import { createCar, updateCar } from '~/graphql/mutations';
 import { CognitoUserExt } from '~/types';
 
-const createDriverCar = async (currentUser: CognitoUserExt) => {
-  //Mock dummy car
+const _createDriverCar = async (currentUser: CognitoUserExt) => {
+  //Mock dummy car since we don't want an interface to register new cars
   const newCarInput: CreateCarInput = {
     id: currentUser.attributes.sub,
     type: 'UberX',
@@ -20,29 +20,25 @@ const createDriverCar = async (currentUser: CognitoUserExt) => {
   }
 };
 
-const getDriverCarByUserId = async (
+const _getDriverCarByUserId = async (
   currentUser: CognitoUserExt,
 ): Promise<Car | undefined> => {
   try {
     const response = (await API.graphql(
       graphqlOperation(getCar, { id: currentUser.attributes.sub }),
-    )) as GraphQLResult<{ getCar: { items: Car } }>;
-    if (response.data) {
-      const { getCar } = response.data;
-      if (getCar) {
-        console.log('User has a car: ', getCar);
-        return getCar as unknown as Car;
-      } else {
-        await createDriverCar(currentUser);
-        return getDriverCarByUserId(currentUser);
-      }
+    )) as GraphQLResult<{ getCar: Car }>;
+    if (response.data?.getCar) {
+      return response.data?.getCar;
+    } else {
+      await _createDriverCar(currentUser);
+      return _getDriverCarByUserId(currentUser);
     }
   } catch (err) {
     console.log('Error Services -> getDriverCarByUserId: ', err);
   }
 };
 
-const updateDriverCar = async (currentCar: UpdateCarInput): Promise<void> => {
+const _updateDriverCar = async (currentCar: UpdateCarInput): Promise<void> => {
   /**
      * You do not have to pass in createdAt and updatedAt fields,
      * AppSync manages this for you.
@@ -57,4 +53,4 @@ const updateDriverCar = async (currentCar: UpdateCarInput): Promise<void> => {
   }
 };
 
-export { createDriverCar, getDriverCarByUserId, updateDriverCar };
+export { _createDriverCar, _getDriverCarByUserId, _updateDriverCar };

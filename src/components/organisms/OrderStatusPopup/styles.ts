@@ -30,15 +30,15 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 15,
-    marginBottom: 100,
+    marginBottom: 55,
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   uberType: {
-    fontSize: 18,
-    color: Colors.white,
+    fontSize: 16,
+    color: Colors.gray,
   },
   userPicture: {
     width: 45,
@@ -69,7 +69,11 @@ const styles = StyleSheet.create({
   },
   slideContainer: {
     marginTop: 20,
-    // backgroundColor: Colors.blue,
+    width: '100%',
+  },
+  slideTitle: {
+    fontWeight: '600',
+    fontSize: 15,
   },
 });
 

@@ -6,16 +6,16 @@ import MapViewDirections, {
 } from 'react-native-maps-directions';
 import { GOOGLE_MAPS_API_KEY } from '@env';
 import Colors from '~/constants/Colors';
-import { LatLng } from 'react-native-maps';
+import { MapDirectionProps } from '~/types';
 
 type MapDirectionsProps = {
   origin?: MapViewDirectionsOrigin;
   destination?: MapViewDirectionsDestination;
-  onDirectionChange?: (
-    distance: number,
-    duration: number,
-    coordinates: LatLng[],
-  ) => void;
+  onDirectionChange?: ({
+    distance,
+    duration,
+    coordinates,
+  }: MapDirectionProps) => void;
 };
 
 const MapDirections = ({
@@ -25,7 +25,7 @@ const MapDirections = ({
 }: MapDirectionsProps) => {
   const onReady = (...args: MapDirectionsResponse[]) => {
     const { distance, duration, coordinates } = args[0];
-    onDirectionChange && onDirectionChange(distance, duration, coordinates);
+    onDirectionChange && onDirectionChange({ distance, duration, coordinates });
   };
   return (
     <MapViewDirections

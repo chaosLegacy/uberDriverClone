@@ -9,92 +9,109 @@ import Colors from '~/constants/Colors';
 import BalanceButton from '~/components/molecules/BalanceButton';
 import NewOrderPopup from '~/components/organisms/NewOrderPopup';
 import OrderStatusPopup from '~/components/organisms/OrderStatusPopup';
-import { CognitoUserExt, OrderInput } from '~/types';
+import { CognitoUserExt, MapDirectionProps } from '~/types';
 import MapDirections from '~/components/molecules/MapDirections';
 import MapMarker from '~/components/molecules/MapMarker';
 import MapView, { LatLng, UserLocationChangeEvent } from 'react-native-maps';
 import { height, moveBetweenTwoPoints, width } from '~/utils';
-import { getDriverCarByUserId, updateDriverCar } from '~/services/car';
-import { getAuthenticatedUser } from '~/services/user';
-import { Car } from '~/API';
+import { _getDriverCarByUserId, _updateDriverCar } from '~/services/car';
+import { _getAuthenticatedUser } from '~/services/user';
+import { Car, Order, UpdateCarInput } from '~/API';
+import { DISTANCE_THRESHOLD, ORDER_STATUS } from '~/constants';
+import { _getOrdersList, _getOrderById, _updateOrder } from '~/services/order';
 
 const HomeTemplate = () => {
-  // Mock client directions: origin: L'atelier du 6 Nantes, destination: Centre Commercial Atlantis
-  const wayPoint = {
-    clientPickUp: {
-      latitude: 47.2050727, //startPoint.geometry.location.lat,
-      longitude: -1.534918, //startPoint.geometry.location.lng,
-    },
-    clientDropOff: {
-      latitude: 47.2256543, //endPoint.geometry.location.lat,
-      longitude: -1.6361498, //endPoint.geometry.location.lng,
-    },
-  };
-
-  const { clientPickUp, clientDropOff } = wayPoint;
   const mapRef = useRef<MapView>(null);
   const [isOnline, setIsOnline] = useState<boolean>(false);
   const [closeNewOrderPopup, setCloseNewOrderPopup] = useState<boolean>(false);
   const [closeStatusOrderPopup, setStatusCloseOrderPopup] =
-    useState<boolean>(false);
-  const [newOrder, setNewOrder] = useState<OrderInput>();
+    useState<boolean>(true);
+  const [ordersList, setOrdersList] = useState<Order[]>([]);
+  const [newOrder, setNewOrder] = useState<Order>();
   const [driverPosition, setDriverPosition] = useState<LatLng>();
-  const [destinationPosition, setDestinationPosition] =
-    useState<LatLng>(clientPickUp);
+  const [destinationPosition, setDestinationPosition] = useState<LatLng>();
   const [currentUser, setCurrentUser] = useState<CognitoUserExt>();
-  const [driverCar, setDriverCar] = useState<Car>();
+  const [driverCar, setDriverCar] = useState<Car | UpdateCarInput>();
+  const [mapDirection, setMapDirection] = useState<MapDirectionProps>();
+  const [orderStatus, setOrderStatus] = useState<ORDER_STATUS>(
+    ORDER_STATUS.NEW,
+  );
+
+  const fetchAuthenticatedUser = async () => {
+    const authenticatedUser = await _getAuthenticatedUser();
+    setCurrentUser(authenticatedUser);
+  };
+  const fetchOrdersList = async () => {
+    const orders = await _getOrdersList();
+    setOrdersList(orders || []);
+  };
+  const fetchDriverCar = async (user: CognitoUserExt) => {
+    const myCar = await _getDriverCarByUserId(user);
+    setDriverCar(myCar);
+    if (myCar) {
+      setIsOnline(!!myCar.isAvailable);
+    }
+  };
+  const updateDriverCar = async (car: UpdateCarInput) => {
+    await _updateDriverCar(car);
+    setDriverCar(car);
+  };
+
+  const fetchOrderById = async (orderId: string) => {
+    const myOrder = await _getOrderById(orderId);
+    setNewOrder(myOrder);
+  };
+  const updateOrderStatus = async (id: string, status: string) => {
+    _updateOrder({
+      id,
+      status,
+    });
+  };
 
   useEffect(() => {
-    const getCurrentUser = async () => {
-      const authenticatedUser = await getAuthenticatedUser();
-      setCurrentUser(authenticatedUser);
-    };
-    // call the function
-    getCurrentUser();
+    fetchAuthenticatedUser();
   }, []);
 
   useEffect(() => {
+    if (isOnline) {
+      fetchOrdersList();
+    }
+  }, [isOnline]);
+
+  useEffect(() => {
     if (currentUser) {
-      const getDriverCar = async () => {
-        const myCar = await getDriverCarByUserId(currentUser);
-        setDriverCar(myCar);
-      };
-      // call the function
-      getDriverCar();
+      fetchDriverCar(currentUser);
     }
   }, [currentUser]);
 
   useEffect(() => {
-    setTimeout(() => {
-      setNewOrder({
-        accept: false,
-        type: 'UberX',
-        userId: '123456',
-        user: {
-          email: 'test@gmail.com',
-          name: 'Youssef',
-          rating: '4.6',
-          username: 'chaoslegacy',
-          id: '123456',
-        },
-        id: 'IR89348948',
-        createdAt: new Date().toDateString(),
-        destLat: clientDropOff.latitude,
-        destLong: clientDropOff.longitude,
-        originLat: clientPickUp.latitude,
-        originLong: clientPickUp.longitude,
-        pickedUp: false,
+    if (ordersList.length) {
+      const myOrder = ordersList[0];
+      fetchOrderById(myOrder.id);
+      setDestinationPosition({
+        latitude: myOrder.destLat,
+        longitude: myOrder.destLong,
       });
-    }, 2000);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+      setCloseNewOrderPopup(false);
+    } else {
+      setDestinationPosition(undefined);
+      setNewOrder(undefined);
+    }
+  }, [ordersList]);
 
   useEffect(() => {
-    if (newOrder && newOrder.accept && driverPosition) {
+    if (
+      newOrder &&
+      (newOrder.status === ORDER_STATUS[ORDER_STATUS.CONFIRMED] ||
+        newOrder.status === ORDER_STATUS[ORDER_STATUS['PICKED-UP']]) &&
+      driverPosition &&
+      destinationPosition
+    ) {
       const currentPoint = driverPosition;
-      const endPoint = clientPickUp;
+      const endPoint = destinationPosition;
       const moveInterval = moveBetweenTwoPoints({
         speed: 0.2,
+        //minDistance: DISTANCE_THRESHOLD,
         currentPoint,
         endPoint,
         setPosition: setDriverPosition, // Update the currentPoint with the new position
@@ -104,30 +121,52 @@ const HomeTemplate = () => {
         clearInterval(moveInterval);
       };
     }
-  }, [newOrder, driverPosition, clientPickUp]);
+  }, [newOrder, driverPosition, destinationPosition]);
 
   const onDeclineOrder = () => {
     console.log('Order declined...');
-    setNewOrder(undefined);
+    setOrdersList(ordersList.slice(1));
+    setDestinationPosition(undefined);
     setCloseNewOrderPopup(true);
   };
-  const onAcceptOrder = (order: OrderInput) => {
+  const onAcceptOrder = (order: Order) => {
     console.log('Order accepted...');
-    setCloseNewOrderPopup(true);
+    const status = ORDER_STATUS[ORDER_STATUS.CONFIRMED];
     setNewOrder({
       ...order,
-      accept: true,
+      status,
     });
+    updateOrderStatus(order.id, status);
+    setDestinationPosition({
+      latitude: order.originLat,
+      longitude: order.originLong,
+    });
+    setCloseNewOrderPopup(true);
   };
-  const onConfirmPickUp = () => {
+  const onConfirmPickUp = (order: Order) => {
     console.log('Confirm pick up');
-    if (newOrder?.pickedUp) {
-      setDestinationPosition(clientDropOff);
-    }
+    const status = ORDER_STATUS[ORDER_STATUS['PICKED-UP']];
+    setNewOrder({
+      ...order,
+      status,
+    });
+    updateOrderStatus(order.id, status);
+    setDestinationPosition({
+      latitude: order.destLat,
+      longitude: order.destLong,
+    });
     setStatusCloseOrderPopup(true);
   };
-  const onConfirmDropOff = () => {
-    console.log('Confirm pick up');
+  const onConfirmDropOff = (order: Order) => {
+    console.log('Confirm drop off ', order.id);
+    const status = ORDER_STATUS[ORDER_STATUS.COMPLETED];
+    setNewOrder({
+      ...order,
+      status,
+    });
+    updateOrderStatus(order.id, status);
+    setDestinationPosition(undefined);
+    setNewOrder(undefined);
     setStatusCloseOrderPopup(true);
   };
   const onSearch = () => {
@@ -138,47 +177,61 @@ const HomeTemplate = () => {
   };
   const onPressGo = async () => {
     if (driverCar) {
-      const updatedCar = {
+      const updatedCar: UpdateCarInput = {
         id: driverCar.id,
         isAvailable: !isOnline,
       };
       await updateDriverCar(updatedCar);
-      setDriverCar({
-        ...driverCar,
-        isAvailable: !isOnline,
-      });
       setIsOnline(!isOnline);
     }
   };
   // Bring Driver location one time
   const onDriverLocationChange = (event: UserLocationChangeEvent) => {
     setDriverPosition(event.nativeEvent.coordinate);
+    setTimeout(() => {
+      if (driverCar && event.nativeEvent.coordinate) {
+        const { latitude, longitude, heading } = event.nativeEvent.coordinate;
+        const updatedCar: UpdateCarInput = {
+          id: driverCar.id,
+          latitude,
+          longitude,
+          heading,
+        };
+        updateDriverCar(updatedCar);
+      }
+    }, 2000); // update DB each 2 sec
   };
-  const onDirectionReady = (
-    distance: number,
-    duration: number,
-    coordinates: LatLng[],
-  ) => {
+  const onDirectionReady = ({
+    distance,
+    duration,
+    coordinates,
+  }: MapDirectionProps) => {
     //Callback that is called when the routing has successfully finished. Note: distance returned in kilometers and duration in minutes.
-    console.log(
-      'Direction found: distance ' + distance + ' duration= ' + duration,
-    );
-    if (newOrder) {
-      setNewOrder({
-        ...newOrder,
-        distance,
-        duration,
-        pickedUp: newOrder.pickedUp || distance <= 0.006,
+    setMapDirection({ distance, duration, coordinates });
+    if (mapRef && mapRef.current) {
+      mapRef.current.fitToCoordinates(coordinates, {
+        edgePadding: {
+          right: width / 20,
+          bottom: height / 20,
+          left: width / 20,
+          top: height / 20,
+        },
       });
-      if (mapRef && mapRef.current) {
-        mapRef.current.fitToCoordinates(coordinates, {
-          edgePadding: {
-            right: width / 20,
-            bottom: height / 20,
-            left: width / 20,
-            top: height / 20,
-          },
-        });
+    }
+
+    if (newOrder) {
+      if (
+        newOrder.status === ORDER_STATUS[ORDER_STATUS.CONFIRMED] &&
+        distance < DISTANCE_THRESHOLD
+      ) {
+        setOrderStatus(ORDER_STATUS['PICKED-UP']);
+        setStatusCloseOrderPopup(false);
+      } else if (
+        newOrder.status === ORDER_STATUS[ORDER_STATUS['PICKED-UP']] &&
+        distance < DISTANCE_THRESHOLD
+      ) {
+        setOrderStatus(ORDER_STATUS['DROP-OFF']);
+        setStatusCloseOrderPopup(false); // status drop off
       }
     }
   };
@@ -232,25 +285,29 @@ const HomeTemplate = () => {
           position={'bottom-center'}
         />
       </View>
-      <MapFooter onlineStatus={isOnline} newOrder={newOrder} />
+      <MapFooter
+        newOrder={newOrder}
+        orderStatus={orderStatus}
+        onlineStatus={isOnline}
+        direction={mapDirection}
+      />
       {newOrder && (
         <>
           <NewOrderPopup
+            newOrder={newOrder}
+            direction={mapDirection}
+            closePopup={closeNewOrderPopup}
             onDecline={onDeclineOrder}
             onAccept={onAcceptOrder}
-            newOrder={newOrder}
-            closePopup={closeNewOrderPopup}
           />
-          {newOrder.pickedUp && (
-            <OrderStatusPopup
-              currentOrder={newOrder}
-              onDecline={onDeclineOrder}
-              onConfirmPickUp={onConfirmPickUp}
-              onConfirmDropOff={onConfirmDropOff}
-              closePopup={closeStatusOrderPopup}
-              status={newOrder.pickedUp ? 'PICK UP' : 'DROP OFF'}
-            />
-          )}
+          <OrderStatusPopup
+            currentOrder={newOrder}
+            status={orderStatus}
+            onDecline={onDeclineOrder}
+            onConfirmPickUp={onConfirmPickUp}
+            onConfirmDropOff={onConfirmDropOff}
+            closePopup={closeStatusOrderPopup}
+          />
         </>
       )}
     </Container>
