@@ -16,7 +16,7 @@ import MapView, { LatLng, UserLocationChangeEvent } from 'react-native-maps';
 import { height, moveBetweenTwoPoints, width } from '~/utils';
 import { _getDriverCarByUserId, _updateDriverCar } from '~/services/car';
 import { _getAuthenticatedUser } from '~/services/user';
-import { Car, Order, UpdateCarInput } from '~/API';
+import { Car, Order, UpdateCarInput, UpdateOrderInput } from '~/API';
 import { DISTANCE_THRESHOLD, ORDER_STATUS } from '~/constants';
 import { _getOrdersList, _getOrderById, _updateOrder } from '~/services/order';
 
@@ -61,11 +61,8 @@ const HomeTemplate = () => {
     const myOrder = await _getOrderById(orderId);
     setNewOrder(myOrder);
   };
-  const updateOrderStatus = async (id: string, status: string) => {
-    _updateOrder({
-      id,
-      status,
-    });
+  const updateOrder = async (order: UpdateOrderInput) => {
+    _updateOrder(order);
   };
 
   useEffect(() => {
@@ -135,8 +132,9 @@ const HomeTemplate = () => {
     setNewOrder({
       ...order,
       status,
+      carId: driverCar?.id,
     });
-    updateOrderStatus(order.id, status);
+    updateOrder({ id: order.id, status, carId: driverCar?.id });
     setDestinationPosition({
       latitude: order.originLat,
       longitude: order.originLong,
@@ -150,7 +148,7 @@ const HomeTemplate = () => {
       ...order,
       status,
     });
-    updateOrderStatus(order.id, status);
+    updateOrder({ id: order.id, status });
     setDestinationPosition({
       latitude: order.destLat,
       longitude: order.destLong,
@@ -164,7 +162,7 @@ const HomeTemplate = () => {
       ...order,
       status,
     });
-    updateOrderStatus(order.id, status);
+    updateOrder({ id: order.id, status });
     setDestinationPosition(undefined);
     setNewOrder(undefined);
     setStatusCloseOrderPopup(true);

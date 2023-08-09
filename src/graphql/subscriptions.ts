@@ -2,6 +2,78 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const onOrderUpdated = /* GraphQL */ `
+  subscription OnOrderUpdated($id: ID!) {
+    onOrderUpdated(id: $id) {
+      id
+      userId
+      user {
+        id
+        username
+        name
+        rating
+        avatar
+        email
+        createdAt
+        updatedAt
+        __typename
+      }
+      carId
+      car {
+        id
+        type
+        uri
+        latitude
+        longitude
+        heading
+        isAvailable
+        createdAt
+        updatedAt
+        __typename
+      }
+      type
+      status
+      originLat
+      originLong
+      destLat
+      destLong
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const onCarUpdated = /* GraphQL */ `
+  subscription OnCarUpdated($id: ID!) {
+    onCarUpdated(id: $id) {
+      id
+      type
+      uri
+      latitude
+      longitude
+      heading
+      isAvailable
+      orders {
+        nextToken
+        __typename
+      }
+      user {
+        id
+        username
+        name
+        rating
+        avatar
+        email
+        createdAt
+        updatedAt
+        __typename
+      }
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
 export const onCreateUser = /* GraphQL */ `
   subscription OnCreateUser($filter: ModelSubscriptionUserFilterInput) {
     onCreateUser(filter: $filter) {

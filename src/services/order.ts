@@ -3,12 +3,13 @@ import { API, graphqlOperation } from 'aws-amplify';
 import { Order, UpdateOrderInput } from '~/API';
 import { listOrders, getOrder } from '~/graphql/queries';
 import { updateOrder } from '~/graphql/mutations';
+import { ORDER_STATUS } from '~/constants';
 
 const _getOrdersList = async (): Promise<Order[] | undefined> => {
   try {
     const response = (await API.graphql(
       graphqlOperation(listOrders, {
-        filter: { status: { eq: 'NEW' } },
+        filter: { status: { eq: ORDER_STATUS[ORDER_STATUS.NEW] } },
       }),
     )) as GraphQLResult<{ listOrders: { items: Order[] } }>;
     return response.data?.listOrders.items;

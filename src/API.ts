@@ -989,6 +989,84 @@ export type OrdersByCarIdAndCreatedAtQuery = {
   } | null,
 };
 
+export type OnOrderUpdatedSubscriptionVariables = {
+  id: string,
+};
+
+export type OnOrderUpdatedSubscription = {
+  onOrderUpdated?:  {
+    __typename: "Order",
+    id: string,
+    userId: string,
+    user?:  {
+      __typename: "User",
+      id: string,
+      username: string,
+      name?: string | null,
+      rating?: number | null,
+      avatar?: string | null,
+      email: string,
+      createdAt: string,
+      updatedAt: string,
+    } | null,
+    carId?: string | null,
+    car?:  {
+      __typename: "Car",
+      id: string,
+      type: string,
+      uri: string,
+      latitude?: number | null,
+      longitude?: number | null,
+      heading?: number | null,
+      isAvailable?: boolean | null,
+      createdAt: string,
+      updatedAt: string,
+    } | null,
+    type: string,
+    status: string,
+    originLat: number,
+    originLong: number,
+    destLat: number,
+    destLong: number,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnCarUpdatedSubscriptionVariables = {
+  id: string,
+};
+
+export type OnCarUpdatedSubscription = {
+  onCarUpdated?:  {
+    __typename: "Car",
+    id: string,
+    type: string,
+    uri: string,
+    latitude?: number | null,
+    longitude?: number | null,
+    heading?: number | null,
+    isAvailable?: boolean | null,
+    orders?:  {
+      __typename: "ModelOrderConnection",
+      nextToken?: string | null,
+    } | null,
+    user?:  {
+      __typename: "User",
+      id: string,
+      username: string,
+      name?: string | null,
+      rating?: number | null,
+      avatar?: string | null,
+      email: string,
+      createdAt: string,
+      updatedAt: string,
+    } | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
 export type OnCreateUserSubscriptionVariables = {
   filter?: ModelSubscriptionUserFilterInput | null,
 };

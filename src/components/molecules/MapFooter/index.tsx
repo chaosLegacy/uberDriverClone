@@ -30,10 +30,21 @@ const MapFooter = ({
           <Text style={styles.time}>
             {direction ? direction.duration.toFixed(1) : '?'} min
           </Text>
-          <Image
-            source={require('assets/images/default.jpeg')}
-            style={styles.userPicture}
-          />
+          {newOrder?.user && (
+            <>
+              {newOrder.user.avatar ? (
+                <Image
+                  source={{ uri: newOrder.user.avatar }}
+                  style={styles.userPicture}
+                />
+              ) : (
+                <Image
+                  source={require('assets/images/default.jpeg')}
+                  style={styles.userPicture}
+                />
+              )}
+            </>
+          )}
           <Text style={styles.distance}>
             {direction ? direction.distance.toFixed(1) : '?'} km
           </Text>

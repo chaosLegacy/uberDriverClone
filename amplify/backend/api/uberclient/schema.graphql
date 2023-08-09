@@ -41,3 +41,8 @@ type Order @model @auth(rules: [{ allow: private }]) {
   destLong: Float!
   createdAt: AWSDateTime!
 }
+
+type Subscription {
+  onOrderUpdated(id: ID!): Order @aws_subscribe(mutations: ["updateOrder"])
+  onCarUpdated(id: ID!): Car @aws_subscribe(mutations: ["updateCar"])
+}
